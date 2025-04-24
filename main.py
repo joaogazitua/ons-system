@@ -3,5 +3,5 @@ import tkinter as tk
 
 if __name__ == "__main__":
     root = tk.Tk()
-    app = MainWindow(root)
+    MainWindow(root)
     root.mainloop()

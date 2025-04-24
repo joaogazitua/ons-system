@@ -1,21 +1,12 @@
 import tkinter as tk
-import tkinter.ttk as ttk
+from tkinter import ttk
+from tkcalendar import Calendar
 
 class MainWindow():
     def __init__(self, root):
-        self.dev_team_value = None
-        self.fixed_alocation = None
-        self.percent_for_retrospective = None
-        self.percent_for_review = None
-        self.percent_for_planning = None
-        self.percent_for_tests = None
-        self.first_sprint_date = None
-        self.days_per_sprint = None
-        self.total_sprint_dev_hours = None
-        self.total_dev_hours = None
         self.root = root
         self.root.title("Gerador de Tabelas de Planejamento")
-        self.root.geometry("800x600")
+        self.root.geometry("600x400")
         self.setup_ui()
 
     def setup_ui(self):
@@ -36,7 +27,9 @@ class MainWindow():
 
         ttk.Label(main_frame, text="Data de inicio da primeira Sprint:").grid(row=3, column=0, sticky=tk.W, pady=5)
         self.first_sprint_date = ttk.Entry(main_frame)
+        self.first_sprint_date.insert(0, 'dd/mm/yyyy')
         self.first_sprint_date.grid(row=3, column=1, pady=5)
+        self.first_sprint_date.bind("<1>", self.pop_up_calendar)
 
         ttk.Label(main_frame, text="Percentual para testes:").grid(row=4, column=0, sticky=tk.W,pady=5)
         self.percent_for_tests = ttk.Entry(main_frame)
@@ -64,6 +57,26 @@ class MainWindow():
 
         genetate_table_btn = ttk.Button(main_frame, text="Gerar Tabela", command=self.generate_table)
         genetate_table_btn.grid(row=20, column=2, columnspan=2, pady=20)
+
+    def pop_up_calendar(self, event):
+        global cal, delete_window
+        date_window = tk.Toplevel()
+        date_window.grab_set()
+        date_window.title("Data de inicio")
+        date_window.geometry("250x230+175+85")
+        cal = Calendar(date_window, selectmode="day", date_pattern="dd/mm/yyyy")
+        cal.grid(row=3, column=2, pady=5)
+
+        submit_btn = ttk.Button(date_window, text="ok", command=self.grab_date)
+        submit_btn.grid(row=4, column=2, pady=5)
+
+        delete_window = date_window
+
+    def grab_date(self):
+        self.first_sprint_date.delete(0, tk.END)
+        self.first_sprint_date.insert(0, cal.get_date())
+        delete_window.destroy()
+
 
 
     def generate_table(self):
