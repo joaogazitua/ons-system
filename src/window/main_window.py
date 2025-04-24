@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import filedialog
 from tkcalendar import Calendar
 
 class MainWindow():
@@ -10,8 +11,21 @@ class MainWindow():
         self.setup_ui()
 
     def setup_ui(self):
+        style = ttk.Style()
+        style.theme_use("clam")
+
+        style.configure("Error.TEntry",
+                        fieldbackground="white",
+                        borderwidth=2,
+                        relief="solid")
+        style.map("Error.TEntry",
+                  bordercolor=[("focus", "red"), ("!focus", "red")])
+
+        style.configure("TEntry", fieldbackground="white")
+
         main_frame= ttk.Frame(self.root, padding=20)
         main_frame.pack(fill=tk.BOTH, expand=True)
+
 
         ttk.Label(main_frame, text="Quantidade de horas totais de desenvolvimento do Projeto:").grid(row=0, column=0, sticky=tk.W, pady=5)
         self.total_dev_hours = ttk.Entry(main_frame)
@@ -25,7 +39,7 @@ class MainWindow():
         self.days_per_sprint = ttk.Entry(main_frame)
         self.days_per_sprint.grid(row=2, column=1, pady=5)
 
-        ttk.Label(main_frame, text="Data de inicio da primeira Sprint:").grid(row=3, column=0, sticky=tk.W, pady=5)
+        ttk.Label(main_frame, text="Data de início da primeira Sprint:").grid(row=3, column=0, sticky=tk.W, pady=5)
         self.first_sprint_date = ttk.Entry(main_frame)
         self.first_sprint_date.insert(0, 'dd/mm/yyyy')
         self.first_sprint_date.grid(row=3, column=1, pady=5)
@@ -47,7 +61,7 @@ class MainWindow():
         self.percent_for_retrospective = ttk.Entry(main_frame)
         self.percent_for_retrospective.grid(row=7, column=1, pady=5)
 
-        ttk.Label(main_frame, text="Alocacao fixa de horas:").grid(row=8, column=0, sticky=tk.W, pady=5)
+        ttk.Label(main_frame, text="Alocação fixa de horas:").grid(row=8, column=0, sticky=tk.W, pady=5)
         self.fixed_alocation = ttk.Entry(main_frame)
         self.fixed_alocation.grid(row=8, column=1, pady=5)
 
@@ -62,8 +76,8 @@ class MainWindow():
         global cal, delete_window
         date_window = tk.Toplevel()
         date_window.grab_set()
-        date_window.title("Data de inicio")
-        date_window.geometry("250x230+175+85")
+        date_window.title("Data de início")
+        date_window.geometry("250x250+175+75")
         cal = Calendar(date_window, selectmode="day", date_pattern="dd/mm/yyyy")
         cal.grid(row=3, column=2, pady=5)
 
@@ -77,10 +91,44 @@ class MainWindow():
         self.first_sprint_date.insert(0, cal.get_date())
         delete_window.destroy()
 
+    def validate_input(self, input):
+        try:
+            return int(input) > 0
+        except ValueError:
+            return False
 
+    def validate_all_inputs(self):
+        entries = [
+            self.total_dev_hours,
+            self.total_sprint_dev_hours,
+            self.days_per_sprint,
+            self.percent_for_tests,
+            self.percent_for_planning,
+            self.percent_for_review,
+            self.percent_for_retrospective,
+            self.fixed_alocation,
+            self.dev_team_value,
+        ]
+        all_valid = True
+        for entry in entries:
+            if self.validate_input(entry.get()):
+                entry.config(style="TEntry")
+            else:
+                entry.config(style="Error.TEntry")
+                all_valid = False
+        if self.first_sprint_date.get() == 'dd/mm/yyyy':
+            self.first_sprint_date.config(style="Error.TEntry")
+            all_valid = False
+        else:
+            self.first_sprint_date.config(style="TEntry")
+        return all_valid
 
     def generate_table(self):
-        project_dev_hours = self.total_dev_hours.get()
-        sprint_dev_hours = self.total_sprint_dev_hours.get()
-        print(f"Horas totais de desenvolvimento do Projeto: {project_dev_hours}")
-        print(f"Horas de desenvolvimento por Sprint: {sprint_dev_hours}")
+        if not self.validate_all_inputs():
+            return
+        folder = filedialog.askdirectory(title="Escolha a pasta para salvar a tabela")
+        if not folder:
+            return
+        file_path = f"{folder}/table.xlsx"
+
+        print("Generando tabela para o path: ", file_path)

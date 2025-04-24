@@ -1,4 +1,4 @@
-from main_window import MainWindow
+from src.window.main_window import MainWindow
 import tkinter as tk
 
 if __name__ == "__main__":
