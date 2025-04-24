@@ -34,7 +34,7 @@ class MainWindow():
         self.days_per_sprint = ttk.Entry(main_frame)
         self.days_per_sprint.grid(row=2, column=1, pady=5)
 
-        ttk.Label(main_frame, text="Data de inicio da primeira Sprint (dd/mm/yyyy):").grid(row=3, column=0, sticky=tk.W, pady=5)
+        ttk.Label(main_frame, text="Data de inicio da primeira Sprint:").grid(row=3, column=0, sticky=tk.W, pady=5)
         self.first_sprint_date = ttk.Entry(main_frame)
         self.first_sprint_date.grid(row=3, column=1, pady=5)
 
@@ -48,11 +48,11 @@ class MainWindow():
 
         ttk.Label(main_frame, text="Percentual para Review:").grid(row=6, column=0, sticky=tk.W, pady=5)
         self.percent_for_review = ttk.Entry(main_frame)
-        self.percent_for_tests.grid(row=6, column=1, pady=5)
+        self.percent_for_review.grid(row=6, column=1, pady=5)
 
         ttk.Label(main_frame, text="Percentual para Retrospectiva:").grid(row=7, column=0, sticky=tk.W, pady=5)
         self.percent_for_retrospective = ttk.Entry(main_frame)
-        self.percent_for_tests.grid(row=7, column=1, pady=5)
+        self.percent_for_retrospective.grid(row=7, column=1, pady=5)
 
         ttk.Label(main_frame, text="Alocacao fixa de horas:").grid(row=8, column=0, sticky=tk.W, pady=5)
         self.fixed_alocation = ttk.Entry(main_frame)
