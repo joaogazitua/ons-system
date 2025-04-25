@@ -3,27 +3,32 @@ from tkinter import ttk
 from tkinter import filedialog
 from tkcalendar import Calendar
 
+MAIN_WIDTH = 600
+MAIN_HEIGHT = 400
+DEFAULT_STYLE = "TEntry"
+ERROR_STYLE = "Error.TEntry"
+POP_UP_WINDOW = f"250x250+{MAIN_WIDTH // 2}+{MAIN_HEIGHT // 2}"
 class MainWindow():
     def __init__(self, root):
         self.root = root
         self.root.title("Gerador de Tabelas de Planejamento")
-        self.root.geometry("600x400")
+        self.root.geometry(f"{MAIN_WIDTH}x{MAIN_HEIGHT}")
         self.setup_ui()
 
     def setup_ui(self):
         style = ttk.Style()
         style.theme_use("clam")
 
-        style.configure("Error.TEntry",
+        style.configure(f"{ERROR_STYLE}",
                         fieldbackground="white",
                         borderwidth=2,
                         relief="solid")
-        style.map("Error.TEntry",
+        style.map(f"{ERROR_STYLE}",
                   bordercolor=[("focus", "red"), ("!focus", "red")])
 
-        style.configure("TEntry", fieldbackground="white")
+        style.configure(f"{DEFAULT_STYLE}", fieldbackground="white")
 
-        main_frame= ttk.Frame(self.root, padding=20)
+        main_frame=ttk.Frame(self.root, padding=20)
         main_frame.pack(fill=tk.BOTH, expand=True)
 
 
@@ -77,10 +82,9 @@ class MainWindow():
         date_window = tk.Toplevel()
         date_window.grab_set()
         date_window.title("Data de início")
-        date_window.geometry("250x250+175+75")
+        date_window.geometry(POP_UP_WINDOW)
         cal = Calendar(date_window, selectmode="day", date_pattern="dd/mm/yyyy")
         cal.grid(row=3, column=2, pady=5)
-
         submit_btn = ttk.Button(date_window, text="ok", command=self.grab_date)
         submit_btn.grid(row=4, column=2, pady=5)
 
@@ -112,23 +116,43 @@ class MainWindow():
         all_valid = True
         for entry in entries:
             if self.validate_input(entry.get()):
-                entry.config(style="TEntry")
+                entry.config(style=f"{DEFAULT_STYLE}")
             else:
-                entry.config(style="Error.TEntry")
+                entry.config(style=f"{ERROR_STYLE}")
                 all_valid = False
         if self.first_sprint_date.get() == 'dd/mm/yyyy':
-            self.first_sprint_date.config(style="Error.TEntry")
+            self.first_sprint_date.config(style=f"{ERROR_STYLE}")
             all_valid = False
         else:
-            self.first_sprint_date.config(style="TEntry")
+            self.first_sprint_date.config(style=f"{DEFAULT_STYLE}")
         return all_valid
+
+    def pop_up_generate_table_error(self):
+        error_window = tk.Toplevel()
+        error_window.title("Error")
+        error_window.geometry(POP_UP_WINDOW)
+        ttk.Label(error_window, text="Erro. Dados inválidos.").pack(expand=True)
+        error_window.grab_set()
+
+    def pop_up_generate_table_success(self):
+        success_window = tk.Toplevel()
+        success_window.title("Success")
+        success_window.geometry(POP_UP_WINDOW)
+        ttk.Label(success_window, text="Tabela criada com sucesso.").pack(expand=True)
+        success_window.grab_set()
 
     def generate_table(self):
         if not self.validate_all_inputs():
+            self.pop_up_generate_table_error()
             return
-        folder = filedialog.askdirectory(title="Escolha a pasta para salvar a tabela")
-        if not folder:
+        file_path = filedialog.asksaveasfilename(
+            title="Escolha onde salvar a tabela",
+            defaultextension=".xlsx",
+            filetypes=[("Planilhas Excel", "*.xlsx")],
+            initialfile="table.xlsx"
+        )
+        if not file_path:
             return
-        file_path = f"{folder}/table.xlsx"
 
         print("Generando tabela para o path: ", file_path)
+        self.pop_up_generate_table_success()
