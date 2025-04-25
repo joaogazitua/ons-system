@@ -1,3 +1,11 @@
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ons-system"
+version = "0.1.0"
+description = "System for ganarating planning tables automatically"
+authors = [
+  { name="Joao Victor Gazitua", email="jvgazituadev@gmail.com" }
+]
