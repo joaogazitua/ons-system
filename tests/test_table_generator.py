@@ -1,4 +1,4 @@
-from src.table_generator.table_generator import TableGenerator
+from table_generator.table_generator import TableGenerator
 
 def test_init():
     generator = TableGenerator(1,1, 1, "1/1/1",
