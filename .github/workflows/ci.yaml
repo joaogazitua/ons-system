@@ -25,10 +25,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+
 
       - name: Install dependencies
         run: |
@@ -36,8 +38,9 @@ jobs:
           pip install .
           pip install pytest
 
+
       - name: Set PYTHONPATH
-        run: echo "PYTHONPATH=${{ github.workspace }}" >> $GITHUB_ENV
+        run: echo "PYTHONPATH=${{ github.workspace }}/src" >> $GITHUB_ENV
 
 
       - name: Run tests
