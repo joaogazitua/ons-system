@@ -40,4 +40,6 @@ jobs:
           
 
       - name: Run tests
-        run: PYTHONPATH=${{ github.workspace }}/src pytest
+        run: pytest
+        env:
+          PYTHONPATH: src
