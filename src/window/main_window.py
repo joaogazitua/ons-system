@@ -2,13 +2,14 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog
 from tkcalendar import Calendar
+from table_generator.table_generator import TableGenerator
 
 MAIN_WIDTH = 600
 MAIN_HEIGHT = 400
 DEFAULT_STYLE = "TEntry"
 ERROR_STYLE = "Error.TEntry"
 POP_UP_WINDOW = f"250x250+{MAIN_WIDTH // 2}+{MAIN_HEIGHT // 2}"
-class MainWindow():
+class MainWindow:
     def __init__(self, root):
         self.root = root
         self.root.title("Gerador de Tabelas de Planejamento")
@@ -95,11 +96,19 @@ class MainWindow():
         self.first_sprint_date.insert(0, cal.get_date())
         delete_window.destroy()
 
-    def validate_input(self, input):
+    def validate_float(self, input):
         try:
-            return int(input) > 0
+            new = input.replace(',', '.')
+            return float(new) > 0
         except ValueError:
             return False
+
+    def safe_float(self,entry_widget):
+        try:
+            text = entry_widget.get().replace(",", ".")
+            return float(text)
+        except ValueError:
+            raise ValueError(f"Valor inválido no campo: {entry_widget}")
 
     def validate_all_inputs(self):
         entries = [
@@ -115,11 +124,15 @@ class MainWindow():
         ]
         all_valid = True
         for entry in entries:
-            if self.validate_input(entry.get()):
+            if self.validate_float(entry.get()):
                 entry.config(style=f"{DEFAULT_STYLE}")
             else:
                 entry.config(style=f"{ERROR_STYLE}")
                 all_valid = False
+
+        if self.safe_float(self.total_sprint_dev_hours) > self.safe_float(self.total_dev_hours):
+            self.total_sprint_dev_hours.config(style=f"{ERROR_STYLE}")
+            all_valid = False
         if self.first_sprint_date.get() == 'dd/mm/yyyy':
             self.first_sprint_date.config(style=f"{ERROR_STYLE}")
             all_valid = False
@@ -154,5 +167,10 @@ class MainWindow():
         if not file_path:
             return
 
-        print("Generando tabela para o path: ", file_path)
-        self.pop_up_generate_table_success()
+        generator = TableGenerator(self.safe_float(self.total_dev_hours), self.safe_float(self.total_sprint_dev_hours),
+                                   self.safe_float(self.days_per_sprint), self.first_sprint_date.get(),
+                                   self.safe_float(self.percent_for_tests),self.safe_float(self.percent_for_planning),
+                                   self.safe_float(self.percent_for_review), self.safe_float(self.percent_for_retrospective),
+                                   self.safe_float(self.fixed_alocation), self.safe_float(self.dev_team_value))
+        if generator.generate_table(file_path): self.pop_up_generate_table_success()
+        else: self.pop_up_generate_table_error()
