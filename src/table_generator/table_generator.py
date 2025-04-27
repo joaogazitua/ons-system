@@ -24,7 +24,7 @@ class TableGenerator:
 
     def generate_table(self, path):
         data = []
-        start_date = self.first_sprint_date
+        start_date = self.calculate_starting_date("")
         end_date = self.calculate_ending_date(start_date)
         remaining_dev_hours = self.net_dev_hours
         total_hours_sprint = 0
@@ -33,7 +33,7 @@ class TableGenerator:
                 record = [f"Sprint {i + 1}"]
                 if i != 0:
                     start_date = self.calculate_starting_date(end_date)
-                    end_date = self.calculate_ending_date(start_date)
+                    end_date = self.calculate_ending_date(end_date)
 
                 record.append(start_date)
                 record.append(end_date)
@@ -94,12 +94,10 @@ class TableGenerator:
         return sprint_hours
 
     def calculate_starting_date(self, previous_end_date):
-        if previous_end_date == "":
-            return self.first_sprint_date
-
-        start_date = datetime.strptime(previous_end_date, DATE_FORMAT) + timedelta(days=1)
+        start_date = self.first_sprint_date
+        if previous_end_date != "" : start_date = datetime.strptime(previous_end_date, DATE_FORMAT) + timedelta(days=1)
         while start_date.weekday() >= 5:
-            start_date -= timedelta(days=1)
+            start_date += timedelta(days=1)
 
         return start_date.strftime(DATE_FORMAT)
 

@@ -1,7 +1,6 @@
 from src.window.main_window import MainWindow
-import tkinter as tk
-
+import customtkinter as ctk
 if __name__ == "__main__":
-    root = tk.Tk()
-    MainWindow(root)
-    root.mainloop()
+    app = ctk.CTk()
+    window = MainWindow(app)
+    app.mainloop()
