@@ -72,8 +72,6 @@ class TableGenerator:
             return False
 
 
-
-
     def calculate_total_project_hours(self):
         test = self.net_dev_hours * (1.0 + (float (self.percent_for_tests / 100.0)))
         return (self.net_dev_hours +

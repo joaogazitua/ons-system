@@ -1,6 +1,5 @@
 from table_generator.table_generator import TableGenerator
-from datetime import datetime
-import pandas as pd
+import math
 
 def test_init():
     generator = TableGenerator(10,3, 1, "1/1/1",
@@ -24,7 +23,7 @@ def test_calculate_total_project_hours():
                          30,20, 10, 10,
                          10, 10)
     t = gen.net_dev_hours * 1.3
-    x = gen.net_dev_hours + t + (t * 1.2) + (t * 1.1) + (t * 1.1) + gen.fixed_alocation
+    x = gen.net_dev_hours + t + (t * 1.2) + (t * 1.1) + (t * 1.1) + (gen.fixed_alocation * (math.ceil(gen.net_dev_hours / gen.net_sprint_dev_hours)))
     net = gen.calculate_total_project_hours()
 
     assert net == x
@@ -33,12 +32,12 @@ def test_calculate_sprint_hours():
     gen = TableGenerator(100, 100, 1, "1/1/1",
                          30, 20, 10, 10,
                          10, 10)
+
     hours_1 = gen.calculate_sprint_hours(200)
     hours_2 = gen.calculate_sprint_hours(50)
 
     assert hours_1 == 682
     assert hours_2 == 346
-
 
 def test_calculate_starting_date():
     gen = TableGenerator(100, 1, 5, "26/04/2025",
