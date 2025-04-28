@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ons-system"
+version = "0.1.0"
+description = "Sistema para gerar tabelas de planejamento automaticamente"
+authors = [
+  { name = "Joao Victor Gazitua", email = "jvgazituadev@gmail.com" }
+]
+readme = "README.md"
+requires-python = ">=3.7"
+dependencies = [
+  "tkcalendar",
+  "pandas"
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
